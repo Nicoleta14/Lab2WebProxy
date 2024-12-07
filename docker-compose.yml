@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # Definim serviciul pentru proxy-ul Nginx.
+  webproxy:
+    image: nicoleta368/webproxy:latest
+    container_name: webproxy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./webproxy/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - webserver1
+      - webserver2
+
+  # Definim primul server web Flask (Web Server 1).
+  webserver1:
+    image: nicoleta368/webserver1:latest
+    container_name: webserver1
+    ports:
+      - "5001:5000"
+    depends_on:
+      - redis
+
+  # Definim al doilea server web Flask (Web Server 2).
+  webserver2:
+    image: nicoleta368/webserver2:latest
+    container_name: webserver2
+    ports:
+      - "5002:5000"
+    depends_on:
+      - redis
+
+  # Definim serviciul pentru baza de date Redis.
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  # Definim primul nod Cassandra.
+  cassandra1:
+    image: nicoleta368/cassandra1:latest
+    container_name: cassandra1
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=CassandraCluster
+      - CASSANDRA_SEEDS=cassandra1
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+    volumes:
+      - cassandra1_data:/var/lib/cassandra
+
+  # Definim al doilea nod Cassandra.
+  cassandra2:
+    image: nicoleta368/cassandra2:latest
+    container_name: cassandra2
+    environment:
+      - CASSANDRA_CLUSTER_NAME=CassandraCluster
+      - CASSANDRA_SEEDS=cassandra1
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra2
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+    depends_on:
+      - cassandra1
+    volumes:
+      - cassandra2_data:/var/lib/cassandra
+
+# Definim volumele Docker pentru a stoca datele în mod persistent.
+volumes:
+  cassandra1_data:
+  cassandra2_data:
