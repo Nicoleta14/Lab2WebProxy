@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # Serviciul pentru proxy-ul Nginx.
   webproxy:
-    image: Nicoleta14/webproxy:latest
+    image: ghcr.io/Nicoleta14/webproxy:latest
     container_name: webproxy
     ports:
       - "8080:80"
@@ -16,7 +16,7 @@ services:
 
   # Primul server web Flask (Web Server 1).
   webserver1:
-    image: Nicoleta14/webserver1:latest
+    image: ghcr.io/Nicoleta14/webserver1:latest
     container_name: webserver1
     ports:
       - "5001:5000"
@@ -29,7 +29,7 @@ services:
 
   # Al doilea server web Flask (Web Server 2).
   webserver2:
-    image: Nicoleta14/webserver2:latest
+    image: ghcr.io/Nicoleta14/webserver2:latest
     container_name: webserver2
     ports:
       - "5002:5000"
@@ -52,7 +52,7 @@ services:
 
   # Primul nod Cassandra.
   cassandra1:
-    image: Nicoleta14/cassandra1:latest
+    image: ghcr.io/Nicoleta14/cassandra1:latest
     container_name: cassandra1
     ports:
       - "9042:9042"
@@ -67,7 +67,7 @@ services:
 
   # Al doilea nod Cassandra.
   cassandra2:
-    image: Nicoleta14/cassandra2:latest
+    image: ghcr.io/Nicoleta14/cassandra2:latest
     container_name: cassandra2
     environment:
       - CASSANDRA_CLUSTER_NAME=CassandraCluster
