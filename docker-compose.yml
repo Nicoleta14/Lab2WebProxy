@@ -1,46 +1,58 @@
 version: '3.8'
 
 services:
-  # Definim serviciul pentru proxy-ul Nginx.
+  # Serviciul pentru proxy-ul Nginx.
   webproxy:
-    image: nicoleta368/webproxy:latest
+    image: Nicoleta14/webproxy:latest
     container_name: webproxy
     ports:
       - "8080:80"
     volumes:
-      - ./webproxy/nginx.conf:/etc/nginx/nginx.conf
+      - ./webproxy/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - webserver1
       - webserver2
+    restart: always
 
-  # Definim primul server web Flask (Web Server 1).
+  # Primul server web Flask (Web Server 1).
   webserver1:
-    image: nicoleta368/webserver1:latest
+    image: Nicoleta14/webserver1:latest
     container_name: webserver1
     ports:
       - "5001:5000"
+    environment:
+      - REDIS_HOST=redis
+      - FLASK_ENV=production
     depends_on:
       - redis
+    restart: always
 
-  # Definim al doilea server web Flask (Web Server 2).
+  # Al doilea server web Flask (Web Server 2).
   webserver2:
-    image: nicoleta368/webserver2:latest
+    image: Nicoleta14/webserver2:latest
     container_name: webserver2
     ports:
       - "5002:5000"
+    environment:
+      - REDIS_HOST=redis
+      - FLASK_ENV=production
     depends_on:
       - redis
+    restart: always
 
-  # Definim serviciul pentru baza de date Redis.
+  # Serviciul pentru baza de date Redis.
   redis:
     image: redis:alpine
     container_name: redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
 
-  # Definim primul nod Cassandra.
+  # Primul nod Cassandra.
   cassandra1:
-    image: nicoleta368/cassandra1:latest
+    image: Nicoleta14/cassandra1:latest
     container_name: cassandra1
     ports:
       - "9042:9042"
@@ -51,10 +63,11 @@ services:
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
     volumes:
       - cassandra1_data:/var/lib/cassandra
+    restart: always
 
-  # Definim al doilea nod Cassandra.
+  # Al doilea nod Cassandra.
   cassandra2:
-    image: nicoleta368/cassandra2:latest
+    image: Nicoleta14/cassandra2:latest
     container_name: cassandra2
     environment:
       - CASSANDRA_CLUSTER_NAME=CassandraCluster
@@ -65,8 +78,10 @@ services:
       - cassandra1
     volumes:
       - cassandra2_data:/var/lib/cassandra
+    restart: always
 
 # Definim volumele Docker pentru a stoca datele în mod persistent.
 volumes:
   cassandra1_data:
   cassandra2_data:
+  redis_data:
