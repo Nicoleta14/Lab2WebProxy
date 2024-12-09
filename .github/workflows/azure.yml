@@ -41,8 +41,8 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/${{ env.REPO }}:latest  # Use the repository name as "latest"
-            ghcr.io/${{ env.REPO }}:${{ github.sha }}  # Tag with SHA
+            ghcr.io/lab2webproxy:latest  # Ensure "latest" is properly formatted
+            ghcr.io/lab2webproxy:${{ github.sha }}  # Tag with SHA
           file: ./webserver2/Dockerfile  # Update this path if needed
 
   deploy:
