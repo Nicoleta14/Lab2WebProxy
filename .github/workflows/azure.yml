@@ -31,14 +31,15 @@ jobs:
       - name: Set repository name
         run: echo "REPO=lab2webproxy" >>${GITHUB_ENV}
 
-      - name: Build and push container image to registry
+      - name: Build and push container image for webserver1
         uses: docker/build-push-action@v5
         with:
           push: true
+          no-cache: true
           tags: |
-            ghcr.io/lab2webproxy:latest
-            ghcr.io/lab2webproxy:${{ github.sha }}
-          file: ./webserver2/Dockerfile
+            ghcr.io/lab2webproxy:webserver1-latest
+            ghcr.io/lab2webproxy:webserver1-${{ github.sha }}
+          file: ./webserver1/Dockerfile
 
   deploy:
     permissions:
@@ -52,4 +53,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.LABB3 }}
-          images: 'ghcr.io/lab2webproxy:latest'
+          images: 'ghcr.io/lab2webproxy:webserver1-latest'
